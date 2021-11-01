@@ -10,11 +10,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FreshFridge">
         <activity
-            android:name=".SplashScreenActivity"
-            android:theme="@style/Theme.Splash"
-            android:exported="true">
+            android:name=".ShoppingActivity"
+            android:exported="true" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="true"
+            android:label="@string/title_activity_settings" />
+        <activity
+            android:name=".splash.SplashScreenActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -22,8 +30,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.FreshFridge.NoActionBar">
-        </activity>
+            android:theme="@style/Theme.FreshFridge.NoActionBar" />
     </application>
 
 </manifest>

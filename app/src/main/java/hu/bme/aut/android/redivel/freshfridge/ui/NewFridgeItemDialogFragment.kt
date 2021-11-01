@@ -1,6 +1,5 @@
 package hu.bme.aut.android.redivel.freshfridge.ui
 
-import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
@@ -21,12 +20,10 @@ class NewFridgeItemDialogFragment : DialogFragment(), DatePickerDialogFragment.D
 
     private lateinit var binding: DialogNewFridgeItemBinding
 
-    var picker: DatePickerDialog? = null
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         listener = context as? NewFridgeItemDialogListener
-            ?: throw RuntimeException("Activity must implement the NewShoppingItemDialogListener interface!")
+            ?: throw RuntimeException("Activity must implement the NewFridgeItemDialogListener interface!")
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -72,6 +69,6 @@ class NewFridgeItemDialogFragment : DialogFragment(), DatePickerDialogFragment.D
     }
 
     companion object {
-        const val TAG = "NewShoppingItemDialogFragment"
+        const val TAG = "NewFridgeItemDialogFragment"
     }
 }

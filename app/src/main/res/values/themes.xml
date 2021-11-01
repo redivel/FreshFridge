@@ -22,8 +22,4 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
-    <style name="Theme.FreshFridge.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.FreshFridge.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
