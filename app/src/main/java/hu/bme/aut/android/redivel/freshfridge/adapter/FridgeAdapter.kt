@@ -1,37 +1,61 @@
 package hu.bme.aut.android.redivel.freshfridge.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import hu.bme.aut.android.redivel.freshfridge.R
 import hu.bme.aut.android.redivel.freshfridge.data.FridgeItem
 import hu.bme.aut.android.redivel.freshfridge.databinding.ItemFridgeBinding
 
-class FridgeAdapter(private val listener: FridgeItemClickListener) :
-    RecyclerView.Adapter<FridgeAdapter.FridgeViewHolder>() {
+class FridgeAdapter(private val listener: FridgeItemClickListener, private val context: Context) :
+    ListAdapter<FridgeItem, FridgeAdapter.FridgeViewHolder>(itemCallback) {
 
-    private val items = mutableListOf<FridgeItem>()
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = FridgeViewHolder(
-        ItemFridgeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+    private var fridgeItemList: List<FridgeItem> = emptyList()
+    private var lastPosition = -1
+
+    class FridgeViewHolder(binding: ItemFridgeBinding) : RecyclerView.ViewHolder(binding.root){
+        val cbIsOpen: CheckBox = binding.cbIsOpen
+        val ivIcon: ImageView = binding.ivIcon
+        val tvName: TextView = binding.tvName
+        val tvDescription: TextView = binding.tvDescription
+        val tvCategory: TextView = binding.tvCategory
+        val tvExpDate: TextView = binding.tvExpDate
+        val cardView: CardView = binding.cardView
+        val ibRemove: ImageButton = binding.ibRemove
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        FridgeViewHolder(ItemFridgeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
     override fun onBindViewHolder(holder: FridgeViewHolder, position: Int) {
-        val fridgeItem = items[position]
+        val fridgeItem = fridgeItemList[position]
 
-        holder.binding.ivIcon.setImageResource(getImageResource(fridgeItem.category))
-        holder.binding.cbIsOpen.isChecked = fridgeItem.isOpen
-        holder.binding.tvName.text = fridgeItem.name
-        holder.binding.tvDescription.text = fridgeItem.description
-        holder.binding.tvCategory.setText(getCategory(fridgeItem.category))
-        holder.binding.tvExpDate.text = fridgeItem.expirationDate
+        holder.cbIsOpen.isChecked = fridgeItem.isOpen
+        holder.ivIcon.setImageResource(getImageResource(fridgeItem.category))
+        holder.tvName.text = fridgeItem.name
+        holder.tvDescription.text = fridgeItem.description
+        holder.tvCategory.setText(getCategory(fridgeItem.category))
+        holder.tvExpDate.text = fridgeItem.expirationDate
+        var color = getBackgroundColor(fridgeItem.category)
+        holder.cardView.setCardBackgroundColor(color)
 
-        holder.binding.cbIsOpen.setOnCheckedChangeListener { buttonView, isChecked ->
+        holder.cbIsOpen.setOnCheckedChangeListener { buttonView, isChecked ->
             fridgeItem.isOpen = isChecked
             listener.onItemChanged(fridgeItem)
         }
 
-        holder.binding.ibRemove.setOnClickListener { listener.onItemDeleted(fridgeItem, position) }
+        holder.ibRemove.setOnClickListener { listener.onItemDeleted(fridgeItem, position) }
     }
 
     private fun getCategory(category: FridgeItem.Category): Int{
@@ -59,28 +83,62 @@ class FridgeAdapter(private val listener: FridgeItemClickListener) :
         }
     }
 
-    fun addItem(item: FridgeItem) {
-        items.add(item)
-        notifyItemInserted(items.size - 1)
+    private fun getBackgroundColor(category: FridgeItem.Category): Int{
+        return when (category){
+            FridgeItem.Category.DAIRY -> ContextCompat.getColor(context, R.color.DAIRY)
+            FridgeItem.Category.FRUITS_VEGETABLES -> ContextCompat.getColor(context, R.color.FRUITS_VEGETABLES)
+            FridgeItem.Category.RAW_MEAT -> ContextCompat.getColor(context, R.color.RAW_MEAT)
+            FridgeItem.Category.PROCESSED_MEAT -> ContextCompat.getColor(context, R.color.PROCESSED_MEAT)
+            FridgeItem.Category.BAKED -> ContextCompat.getColor(context, R.color.BAKED)
+            FridgeItem.Category.READY_MEAL -> ContextCompat.getColor(context, R.color.READY_MEAL)
+            FridgeItem.Category.OTHER -> ContextCompat.getColor(context, R.color.OTHER)
+        }
+    }
+
+    fun addItem(item: FridgeItem?) {
+        item ?: return
+
+        fridgeItemList += (item)
+        submitList((fridgeItemList))
     }
 
     fun update(fridgeItems: List<FridgeItem>) {
-        items.clear()
-        items.addAll(fridgeItems)
-        notifyDataSetChanged()
+        fridgeItemList.forEach { fridgeItemList -= (it) }
+        fridgeItems.forEach { fridgeItemList += (it) }
+        submitList((fridgeItemList))
     }
 
-    fun removeItem(item: FridgeItem, pos: Int) {
-        items.remove(item)
-        notifyItemRemoved(pos)
+    fun removeItem(item: FridgeItem?, pos: Int) {
+        item ?: return
+
+        fridgeItemList -= (item)
+        submitList((fridgeItemList))
     }
 
-    override fun getItemCount(): Int = items.size
+//    private fun setAnimation(viewToAnimate: View, position: Int) {
+//        if (position > lastPosition) {
+//            val animation = AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left)
+//            viewToAnimate.startAnimation(animation)
+//            lastPosition = position
+//        }
+//    }
+
+    override fun getItemCount(): Int = fridgeItemList.size
 
     interface FridgeItemClickListener {
         fun onItemChanged(item: FridgeItem)
         fun onItemDeleted(item: FridgeItem, pos: Int)
     }
 
-    inner class FridgeViewHolder(val binding: ItemFridgeBinding) : RecyclerView.ViewHolder(binding.root)
+    companion object {
+        object itemCallback : DiffUtil.ItemCallback<FridgeItem>() {
+            override fun areItemsTheSame(oldItem: FridgeItem, newItem: FridgeItem): Boolean {
+                return oldItem.uid == newItem.uid
+            }
+
+            override fun areContentsTheSame(oldItem: FridgeItem, newItem: FridgeItem): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
 }

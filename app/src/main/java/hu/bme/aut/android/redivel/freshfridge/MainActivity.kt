@@ -1,30 +1,32 @@
 package hu.bme.aut.android.redivel.freshfridge
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QueryDocumentSnapshot
 import hu.bme.aut.android.redivel.freshfridge.adapter.FridgeAdapter
-import hu.bme.aut.android.redivel.freshfridge.data.FridgeDatabase
+//import hu.bme.aut.android.redivel.freshfridge.data.FridgeDatabase
 import hu.bme.aut.android.redivel.freshfridge.data.FridgeItem
 import hu.bme.aut.android.redivel.freshfridge.databinding.ActivityMainBinding
 import hu.bme.aut.android.redivel.freshfridge.ui.NewFridgeItemDialogFragment
 import kotlin.concurrent.thread
 
-class MainActivity : AppCompatActivity(), FridgeAdapter.FridgeItemClickListener, NewFridgeItemDialogFragment.NewFridgeItemDialogListener {
+class MainActivity : AppCompatActivity()
+    , FridgeAdapter.FridgeItemClickListener
+    , NewFridgeItemDialogFragment.NewFridgeItemDialogListener
+{
 
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var database: FridgeDatabase
+//    private lateinit var database: FridgeDatabase
     private lateinit var adapter: FridgeAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +36,7 @@ class MainActivity : AppCompatActivity(), FridgeAdapter.FridgeItemClickListener,
 
         setSupportActionBar(binding.toolbar)
 
-        database = FridgeDatabase.getDatabase(applicationContext)
+//        database = FridgeDatabase.getDatabase(applicationContext)
 
         initRecyclerView()
 
@@ -43,6 +45,8 @@ class MainActivity : AppCompatActivity(), FridgeAdapter.FridgeItemClickListener,
                 supportFragmentManager,
                 NewFridgeItemDialogFragment.TAG)
         }
+
+        initFridgeItemsListener()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -60,36 +64,42 @@ class MainActivity : AppCompatActivity(), FridgeAdapter.FridgeItemClickListener,
                 startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
                 true
             }
+            R.id.icLogout -> {
+                FirebaseAuth.getInstance().signOut()
+                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                finish()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     private fun initRecyclerView() {
-        adapter = FridgeAdapter(this)
+        adapter = FridgeAdapter(this, applicationContext)
         binding.rvMain.layoutManager = LinearLayoutManager(applicationContext)
         binding.rvMain.adapter = adapter
-        loadItemsInBackground()
+//        loadItemsInBackground()
     }
 
-    private fun loadItemsInBackground() {
-        thread {
-            val items = database.fridgeItemDao().getAll()
-            runOnUiThread {
-                adapter.update(items)
-            }
-        }
-    }
+//    private fun loadItemsInBackground() {
+//        thread {
+//            val items = database.fridgeItemDao().getAll()
+//            runOnUiThread {
+//                adapter.update(items)
+//            }
+//        }
+//    }
 
     override fun onItemChanged(item: FridgeItem) {
         thread {
-            database.fridgeItemDao().update(item)
+//            database.fridgeItemDao().update(item)
             Log.d("MainActivity", "FridgeItem update was successful")
         }
     }
 
     override fun onItemDeleted(item: FridgeItem, pos: Int) {
         thread {
-            database.fridgeItemDao().deleteItem(item)
+//            database.fridgeItemDao().deleteItem(item)
 
             runOnUiThread {
                 adapter.removeItem(item,pos)
@@ -99,11 +109,33 @@ class MainActivity : AppCompatActivity(), FridgeAdapter.FridgeItemClickListener,
 
     override fun onFridgeItemCreated(newItem: FridgeItem) {
         thread {
-            database.fridgeItemDao().insert(newItem)
+//            database.fridgeItemDao().insert(newItem)
 
             runOnUiThread {
                 adapter.addItem(newItem)
             }
         }
     }
+
+    private fun initFridgeItemsListener() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("fridgeitems")
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
+
+                for (dc in snapshots!!.documentChanges) {
+                    when (dc.type) {
+                        DocumentChange.Type.ADDED -> adapter.addItem(dc.document.toObject(FridgeItem::class.java))
+                        DocumentChange.Type.MODIFIED -> Toast.makeText(this, dc.document.data.toString(), Toast.LENGTH_SHORT).show()
+                        DocumentChange.Type.REMOVED -> Toast.makeText(this, dc.document.data.toString(), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+    }
+
 }
+
+

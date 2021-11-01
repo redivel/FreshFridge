@@ -16,4 +16,12 @@
     <color name="secondaryDarkColor">#c76421</color>
     <color name="primaryTextColor">#FFFFFF</color>
     <color name="secondaryTextColor">#FFFFFF</color>
+
+    <color name="DAIRY">#FFFFFF</color>
+    <color name="FRUITS_VEGETABLES">#99FF99</color>
+    <color name="RAW_MEAT">#FF7777</color>
+    <color name="PROCESSED_MEAT">#FFAAAA</color>
+    <color name="BAKED">#FFFFAA</color>
+    <color name="READY_MEAL">#99BBFF</color>
+    <color name="OTHER">#FFCCAA</color>
 </resources>

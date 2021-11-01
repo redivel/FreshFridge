@@ -6,13 +6,19 @@
     <item
         android:id="@+id/icShopping"
         android:icon="@drawable/ic_shoppinglist"
-        android:title="asdf"
-        app:showAsAction="always"/>
+        android:title="Shopping list"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/icSettings"
         android:icon="@drawable/ic_settings"
-        android:title="qwer"
-        app:showAsAction="always"/>
+        android:title="Settings"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/icLogout"
+        android:icon="@drawable/ic_logout"
+        android:title="Logout"
+        app:showAsAction="ifRoom"/>
 
 </menu>
