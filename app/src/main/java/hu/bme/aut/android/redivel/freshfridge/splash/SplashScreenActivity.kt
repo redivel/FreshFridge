@@ -3,7 +3,9 @@ package hu.bme.aut.android.redivel.freshfridge.splash
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
@@ -20,9 +22,16 @@ class SplashScreenActivity : AppCompatActivity() {
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
+
         val animation = AnimationUtils.loadAnimation(baseContext, R.anim.zoom)
 
         binding.SplashImg.startAnimation(animation)
+
+        val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
 
         animation.setAnimationListener(object : Animation.AnimationListener{
             override fun onAnimationRepeat(animation: Animation?) {
@@ -30,8 +39,10 @@ class SplashScreenActivity : AppCompatActivity() {
             }
 
             override fun onAnimationEnd(animation: Animation?) {
-                binding.root.visibility = View.GONE
-                startActivity(Intent(this@SplashScreenActivity, MainActivity::class.java))
+                binding.SplashImg.visibility = View.GONE
+//                finish()
+                startActivity(intent)
+                finish()
             }
 
             override fun onAnimationStart(animation: Animation?) {

@@ -1,11 +1,17 @@
 package hu.bme.aut.android.redivel.freshfridge
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import hu.bme.aut.android.redivel.freshfridge.adapter.FridgeAdapter
 import hu.bme.aut.android.redivel.freshfridge.data.FridgeDatabase
