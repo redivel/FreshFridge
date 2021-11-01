@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "433637611113",
+    "project_id": "freshfridge-a06a1",
+    "storage_bucket": "freshfridge-a06a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:433637611113:android:d714ff4c533a4242c474f8",
+        "android_client_info": {
+          "package_name": "hu.bme.aut.android.redivel.freshfridge"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "433637611113-gitlq1l9esh21uej7a8cd38vgoe2a88c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfWuVzTFjworFtgR05FwZfQa_4LB9SOxU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "433637611113-gitlq1l9esh21uej7a8cd38vgoe2a88c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
