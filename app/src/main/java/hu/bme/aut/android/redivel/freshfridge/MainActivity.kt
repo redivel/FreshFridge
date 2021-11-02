@@ -18,8 +18,12 @@ import hu.bme.aut.android.redivel.freshfridge.data.FridgeItem
 import hu.bme.aut.android.redivel.freshfridge.databinding.ActivityMainBinding
 import hu.bme.aut.android.redivel.freshfridge.ui.NewFridgeItemDialogFragment
 import kotlin.concurrent.thread
+import com.google.firebase.firestore.DocumentReference
 
-class MainActivity : AppCompatActivity()
+
+
+
+class MainActivity : BaseActivity()
     , FridgeAdapter.FridgeItemClickListener
     , NewFridgeItemDialogFragment.NewFridgeItemDialogListener
 {
@@ -78,43 +82,41 @@ class MainActivity : AppCompatActivity()
         adapter = FridgeAdapter(this, applicationContext)
         binding.rvMain.layoutManager = LinearLayoutManager(applicationContext)
         binding.rvMain.adapter = adapter
-//        loadItemsInBackground()
+        binding.rvMain.itemAnimator = null;
     }
-
-//    private fun loadItemsInBackground() {
-//        thread {
-//            val items = database.fridgeItemDao().getAll()
-//            runOnUiThread {
-//                adapter.update(items)
-//            }
-//        }
-//    }
 
     override fun onItemChanged(item: FridgeItem) {
         thread {
-//            database.fridgeItemDao().update(item)
+            runOnUiThread {
+                adapter.update(item)
+            }
             Log.d("MainActivity", "FridgeItem update was successful")
         }
+        initFridgeItemsListener()
     }
 
-    override fun onItemDeleted(item: FridgeItem, pos: Int) {
-        thread {
-//            database.fridgeItemDao().deleteItem(item)
-
-            runOnUiThread {
-                adapter.removeItem(item,pos)
-            }
-        }
+    override fun onItemDeleted(item: FridgeItem) {
+//        thread {
+//            runOnUiThread {
+//                adapter.removeItem(item)
+//            }
+//        }
+        val db = FirebaseFirestore.getInstance()
+        db.collection("fridgeitems")
+            .document(item.id).delete()
+            .addOnSuccessListener {
+                toast("Item removed") }
+            .addOnFailureListener { e -> toast(e.toString()) }
+        initFridgeItemsListener()
     }
 
     override fun onFridgeItemCreated(newItem: FridgeItem) {
-        thread {
-//            database.fridgeItemDao().insert(newItem)
-
-            runOnUiThread {
-                adapter.addItem(newItem)
-            }
-        }
+        val db = FirebaseFirestore.getInstance()
+        db.collection("fridgeitems")
+            .add(newItem)
+            .addOnSuccessListener {
+                toast("Item created") }
+            .addOnFailureListener { e -> toast(e.toString()) }
     }
 
     private fun initFridgeItemsListener() {
@@ -122,15 +124,37 @@ class MainActivity : AppCompatActivity()
         db.collection("fridgeitems")
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
-                    Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
+                    toast(e.toString())
                     return@addSnapshotListener
                 }
 
                 for (dc in snapshots!!.documentChanges) {
                     when (dc.type) {
-                        DocumentChange.Type.ADDED -> adapter.addItem(dc.document.toObject(FridgeItem::class.java))
-                        DocumentChange.Type.MODIFIED -> Toast.makeText(this, dc.document.data.toString(), Toast.LENGTH_SHORT).show()
-                        DocumentChange.Type.REMOVED -> Toast.makeText(this, dc.document.data.toString(), Toast.LENGTH_SHORT).show()
+                        DocumentChange.Type.ADDED -> {
+                            val item = FridgeItem(dc.document.toObject(FridgeItem::class.java))
+                            item.id = dc.document.id
+                            thread{
+                                runOnUiThread{
+                                    adapter.addItem(item)
+                                }
+                            }
+                        }
+                        DocumentChange.Type.MODIFIED -> {
+                            val item = FridgeItem(dc.document.toObject(FridgeItem::class.java))
+                            thread {
+                                runOnUiThread {
+                                    adapter.update(item)
+                                }
+                            }
+                        }
+                        DocumentChange.Type.REMOVED -> {
+                            val item = FridgeItem(dc.document.toObject(FridgeItem::class.java))
+                            thread {
+                                runOnUiThread {
+                                    adapter.removeItem(item)
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -9,6 +9,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import hu.bme.aut.android.redivel.freshfridge.LoginActivity
+import hu.bme.aut.android.redivel.freshfridge.MainActivity
 import hu.bme.aut.android.redivel.freshfridge.R
 import hu.bme.aut.android.redivel.freshfridge.databinding.ActivitySplashScreenBinding
 
@@ -30,7 +31,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
         binding.SplashImg.startAnimation(animation)
 
-        val intent = Intent(this@SplashScreenActivity, LoginActivity::class.java)
+        val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
 
         animation.setAnimationListener(object : Animation.AnimationListener{
             override fun onAnimationRepeat(animation: Animation?) {

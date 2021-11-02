@@ -20,8 +20,7 @@ import hu.bme.aut.android.redivel.freshfridge.databinding.ItemFridgeBinding
 class FridgeAdapter(private val listener: FridgeItemClickListener, private val context: Context) :
     ListAdapter<FridgeItem, FridgeAdapter.FridgeViewHolder>(itemCallback) {
 
-    private var fridgeItemList: List<FridgeItem> = emptyList()
-    private var lastPosition = -1
+    private var fridgeItemList: MutableList<FridgeItem> = mutableListOf()
 
     class FridgeViewHolder(binding: ItemFridgeBinding) : RecyclerView.ViewHolder(binding.root){
         val cbIsOpen: CheckBox = binding.cbIsOpen
@@ -36,7 +35,7 @@ class FridgeAdapter(private val listener: FridgeItemClickListener, private val c
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         FridgeViewHolder(ItemFridgeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-    )
+        )
 
     override fun onBindViewHolder(holder: FridgeViewHolder, position: Int) {
         val fridgeItem = fridgeItemList[position]
@@ -47,7 +46,7 @@ class FridgeAdapter(private val listener: FridgeItemClickListener, private val c
         holder.tvDescription.text = fridgeItem.description
         holder.tvCategory.setText(getCategory(fridgeItem.category))
         holder.tvExpDate.text = fridgeItem.expirationDate
-        var color = getBackgroundColor(fridgeItem.category)
+        val color = getBackgroundColor(fridgeItem.category)
         holder.cardView.setCardBackgroundColor(color)
 
         holder.cbIsOpen.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -55,7 +54,7 @@ class FridgeAdapter(private val listener: FridgeItemClickListener, private val c
             listener.onItemChanged(fridgeItem)
         }
 
-        holder.ibRemove.setOnClickListener { listener.onItemDeleted(fridgeItem, position) }
+        holder.ibRemove.setOnClickListener { listener.onItemDeleted(fridgeItem) }
     }
 
     private fun getCategory(category: FridgeItem.Category): Int{
@@ -95,24 +94,20 @@ class FridgeAdapter(private val listener: FridgeItemClickListener, private val c
         }
     }
 
-    fun addItem(item: FridgeItem?) {
-        item ?: return
-
-        fridgeItemList += (item)
-        submitList((fridgeItemList))
+    fun addItem(item: FridgeItem) {
+        fridgeItemList.add(item)
+        notifyDataSetChanged()
     }
 
-    fun update(fridgeItems: List<FridgeItem>) {
-        fridgeItemList.forEach { fridgeItemList -= (it) }
-        fridgeItems.forEach { fridgeItemList += (it) }
-        submitList((fridgeItemList))
+    fun update(item: FridgeItem) {
+        fridgeItemList.remove(item)
+        fridgeItemList.add(item)
+        notifyDataSetChanged()
     }
 
-    fun removeItem(item: FridgeItem?, pos: Int) {
-        item ?: return
-
-        fridgeItemList -= (item)
-        submitList((fridgeItemList))
+    fun removeItem(item: FridgeItem) {
+        fridgeItemList.remove(item)
+        notifyDataSetChanged()
     }
 
 //    private fun setAnimation(viewToAnimate: View, position: Int) {
@@ -127,13 +122,13 @@ class FridgeAdapter(private val listener: FridgeItemClickListener, private val c
 
     interface FridgeItemClickListener {
         fun onItemChanged(item: FridgeItem)
-        fun onItemDeleted(item: FridgeItem, pos: Int)
+        fun onItemDeleted(item: FridgeItem)
     }
 
     companion object {
         object itemCallback : DiffUtil.ItemCallback<FridgeItem>() {
             override fun areItemsTheSame(oldItem: FridgeItem, newItem: FridgeItem): Boolean {
-                return oldItem.uid == newItem.uid
+                return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(oldItem: FridgeItem, newItem: FridgeItem): Boolean {
