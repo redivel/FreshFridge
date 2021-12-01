@@ -85,29 +85,29 @@ class MainActivity : BaseActivity()
         binding.rvMain.itemAnimator = null;
     }
 
-    override fun onItemChanged(item: FridgeItem) {
+    override fun onItemChanged(item: FridgeItem, idx: Int) {
         thread {
             runOnUiThread {
-                adapter.update(item)
+                adapter.update(item, idx)
             }
             Log.d("MainActivity", "FridgeItem update was successful")
         }
-        initFridgeItemsListener()
+//        initFridgeItemsListener()
     }
 
-    override fun onItemDeleted(item: FridgeItem) {
-//        thread {
-//            runOnUiThread {
-//                adapter.removeItem(item)
-//            }
-//        }
+    override fun onItemDeleted(item: FridgeItem, idx: Int) {
+        thread {
+            runOnUiThread {
+                adapter.removeItem(item, idx)
+            }
+        }
         val db = FirebaseFirestore.getInstance()
         db.collection("fridgeitems")
             .document(item.id).delete()
             .addOnSuccessListener {
                 toast("Item removed") }
             .addOnFailureListener { e -> toast(e.toString()) }
-        initFridgeItemsListener()
+//        initFridgeItemsListener()
     }
 
     override fun onFridgeItemCreated(newItem: FridgeItem) {
@@ -143,7 +143,7 @@ class MainActivity : BaseActivity()
                             val item = FridgeItem(dc.document.toObject(FridgeItem::class.java))
                             thread {
                                 runOnUiThread {
-                                    adapter.update(item)
+                                    adapter.update(item, 0)
                                 }
                             }
                         }
@@ -151,7 +151,7 @@ class MainActivity : BaseActivity()
                             val item = FridgeItem(dc.document.toObject(FridgeItem::class.java))
                             thread {
                                 runOnUiThread {
-                                    adapter.removeItem(item)
+                                    adapter.removeItem(item, 0)
                                 }
                             }
                         }

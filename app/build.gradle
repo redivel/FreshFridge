@@ -59,4 +59,5 @@ dependencies {
     def core_version = "1.6.0"
     implementation "androidx.core:core-ktx:$core_version"
     implementation 'com.google.firebase:firebase-firestore:24.0.0'
+    implementation 'com.google.firebase:firebase-messaging:23.0.0'
 }

@@ -31,7 +31,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
         binding.SplashImg.startAnimation(animation)
 
-        val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
+        val intent = Intent(this@SplashScreenActivity, LoginActivity::class.java)
 
         animation.setAnimationListener(object : Animation.AnimationListener{
             override fun onAnimationRepeat(animation: Animation?) {

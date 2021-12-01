@@ -51,10 +51,10 @@ class FridgeAdapter(private val listener: FridgeItemClickListener, private val c
 
         holder.cbIsOpen.setOnCheckedChangeListener { buttonView, isChecked ->
             fridgeItem.isOpen = isChecked
-            listener.onItemChanged(fridgeItem)
+            listener.onItemChanged(fridgeItem, position)
         }
 
-        holder.ibRemove.setOnClickListener { listener.onItemDeleted(fridgeItem) }
+        holder.ibRemove.setOnClickListener { listener.onItemDeleted(fridgeItem, position) }
     }
 
     private fun getCategory(category: FridgeItem.Category): Int{
@@ -96,33 +96,25 @@ class FridgeAdapter(private val listener: FridgeItemClickListener, private val c
 
     fun addItem(item: FridgeItem) {
         fridgeItemList.add(item)
-        notifyDataSetChanged()
+        notifyItemInserted(fridgeItemList.size-1)
     }
 
-    fun update(item: FridgeItem) {
+    fun update(item: FridgeItem, idx: Int) {
         fridgeItemList.remove(item)
         fridgeItemList.add(item)
-        notifyDataSetChanged()
+        notifyItemChanged(idx)
     }
 
-    fun removeItem(item: FridgeItem) {
+    fun removeItem(item: FridgeItem, idx: Int) {
         fridgeItemList.remove(item)
-        notifyDataSetChanged()
+        notifyItemRemoved(idx)
     }
-
-//    private fun setAnimation(viewToAnimate: View, position: Int) {
-//        if (position > lastPosition) {
-//            val animation = AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left)
-//            viewToAnimate.startAnimation(animation)
-//            lastPosition = position
-//        }
-//    }
 
     override fun getItemCount(): Int = fridgeItemList.size
 
     interface FridgeItemClickListener {
-        fun onItemChanged(item: FridgeItem)
-        fun onItemDeleted(item: FridgeItem)
+        fun onItemChanged(item: FridgeItem, idx: Int)
+        fun onItemDeleted(item: FridgeItem, idx: Int)
     }
 
     companion object {
