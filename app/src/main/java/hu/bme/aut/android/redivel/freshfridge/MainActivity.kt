@@ -1,36 +1,28 @@
 package hu.bme.aut.android.redivel.freshfridge
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QueryDocumentSnapshot
 import hu.bme.aut.android.redivel.freshfridge.adapter.FridgeAdapter
-//import hu.bme.aut.android.redivel.freshfridge.data.FridgeDatabase
 import hu.bme.aut.android.redivel.freshfridge.data.FridgeItem
+import hu.bme.aut.android.redivel.freshfridge.data.ShoppingItem
 import hu.bme.aut.android.redivel.freshfridge.databinding.ActivityMainBinding
+import hu.bme.aut.android.redivel.freshfridge.ui.AddToShoppingDialogFragment
 import hu.bme.aut.android.redivel.freshfridge.ui.NewFridgeItemDialogFragment
 import kotlin.concurrent.thread
-import com.google.firebase.firestore.DocumentReference
 
-
-
-
-class MainActivity : BaseActivity()
-    , FridgeAdapter.FridgeItemClickListener
-    , NewFridgeItemDialogFragment.NewFridgeItemDialogListener
+class MainActivity : BaseActivity(),
+    FridgeAdapter.FridgeItemClickListener,
+    NewFridgeItemDialogFragment.NewFridgeItemDialogListener,
+    AddToShoppingDialogFragment.AddToShoppingDialogListener
 {
 
     private lateinit var binding: ActivityMainBinding
-
-//    private lateinit var database: FridgeDatabase
     private lateinit var adapter: FridgeAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,49 +71,57 @@ class MainActivity : BaseActivity()
     }
 
     private fun initRecyclerView() {
-        adapter = FridgeAdapter(this, applicationContext)
+        adapter = FridgeAdapter(this, applicationContext, supportFragmentManager)
         binding.rvMain.layoutManager = LinearLayoutManager(applicationContext)
         binding.rvMain.adapter = adapter
         binding.rvMain.itemAnimator = null;
     }
 
-    override fun onItemChanged(item: FridgeItem, idx: Int) {
-        thread {
-            runOnUiThread {
-                adapter.update(item, idx)
+    override fun onItemChanged(item: FridgeItem) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("fridgeitems-$uid")
+            .document(item.id).update("open",item.isOpen)
+            .addOnSuccessListener {
+                toast("Item updated")
             }
-            Log.d("MainActivity", "FridgeItem update was successful")
-        }
-//        initFridgeItemsListener()
+            .addOnFailureListener { e -> toast(e.toString()) }
     }
 
-    override fun onItemDeleted(item: FridgeItem, idx: Int) {
-        thread {
-            runOnUiThread {
-                adapter.removeItem(item, idx)
-            }
-        }
+    override fun onItemDeleted(item: FridgeItem) {
         val db = FirebaseFirestore.getInstance()
-        db.collection("fridgeitems")
+        db.collection("fridgeitems-$uid")
             .document(item.id).delete()
             .addOnSuccessListener {
-                toast("Item removed") }
+                toast("Item removed")
+            }
             .addOnFailureListener { e -> toast(e.toString()) }
-//        initFridgeItemsListener()
     }
 
     override fun onFridgeItemCreated(newItem: FridgeItem) {
         val db = FirebaseFirestore.getInstance()
-        db.collection("fridgeitems")
+        db.collection("fridgeitems-$uid")
             .add(newItem)
             .addOnSuccessListener {
-                toast("Item created") }
+                toast("Item created")
+                it.update("id",it.id)
+            }
+            .addOnFailureListener { e -> toast(e.toString()) }
+    }
+
+    override fun onItemAdded(newItem: ShoppingItem) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("shoppinglist-$uid")
+            .add(newItem)
+            .addOnSuccessListener {
+                toast("Item created")
+                it.update("id",it.id)
+            }
             .addOnFailureListener { e -> toast(e.toString()) }
     }
 
     private fun initFridgeItemsListener() {
         val db = FirebaseFirestore.getInstance()
-        db.collection("fridgeitems")
+        db.collection("fridgeitems-$uid")
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
                     toast(e.toString())
@@ -132,18 +132,18 @@ class MainActivity : BaseActivity()
                     when (dc.type) {
                         DocumentChange.Type.ADDED -> {
                             val item = FridgeItem(dc.document.toObject(FridgeItem::class.java))
-                            item.id = dc.document.id
-                            thread{
-                                runOnUiThread{
-                                    adapter.addItem(item)
+                            if (item.id != "")
+                                thread{
+                                    runOnUiThread{
+                                        adapter.addItem(item)
+                                    }
                                 }
-                            }
                         }
                         DocumentChange.Type.MODIFIED -> {
                             val item = FridgeItem(dc.document.toObject(FridgeItem::class.java))
                             thread {
                                 runOnUiThread {
-                                    adapter.update(item, 0)
+                                    adapter.update(item)
                                 }
                             }
                         }
@@ -151,7 +151,7 @@ class MainActivity : BaseActivity()
                             val item = FridgeItem(dc.document.toObject(FridgeItem::class.java))
                             thread {
                                 runOnUiThread {
-                                    adapter.removeItem(item, 0)
+                                    adapter.removeItem(item)
                                 }
                             }
                         }

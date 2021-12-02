@@ -1,20 +1,17 @@
 package hu.bme.aut.android.redivel.freshfridge.ui
 
 import android.app.Dialog
-import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
 import hu.bme.aut.android.redivel.freshfridge.R
 import hu.bme.aut.android.redivel.freshfridge.data.FridgeItem
+import hu.bme.aut.android.redivel.freshfridge.data.ItemCategory
 import hu.bme.aut.android.redivel.freshfridge.databinding.DialogNewFridgeItemBinding
 
 class NewFridgeItemDialogFragment : DialogFragment(), DatePickerDialogFragment.DateListener {
@@ -23,8 +20,13 @@ class NewFridgeItemDialogFragment : DialogFragment(), DatePickerDialogFragment.D
     }
 
     private lateinit var listener: NewFridgeItemDialogListener
-
     private lateinit var binding: DialogNewFridgeItemBinding
+
+    private val firebaseUser: FirebaseUser?
+        get() = FirebaseAuth.getInstance().currentUser
+
+    private val uid: String?
+        get() = firebaseUser?.uid
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -70,20 +72,13 @@ class NewFridgeItemDialogFragment : DialogFragment(), DatePickerDialogFragment.D
         name = binding.etName.text.toString(),
         description = binding.etDescription.text.toString(),
         expirationDate = binding.tvExpirationDate.text.toString(),
-        category = FridgeItem.Category.getByOrdinal(binding.spCategory.selectedItemPosition)
-            ?: FridgeItem.Category.OTHER,
+        category = ItemCategory.getByOrdinal(binding.spCategory.selectedItemPosition) ?: ItemCategory.OTHER,
         isOpen = binding.cbOpened.isChecked
     )
 
     override fun onDateSelected(date: String) {
         binding.tvExpirationDate.setText(date)
     }
-
-    private val firebaseUser: FirebaseUser?
-        get() = FirebaseAuth.getInstance().currentUser
-
-    private val uid: String?
-        get() = firebaseUser?.uid
 
     private val userName: String?
         get() = firebaseUser?.displayName

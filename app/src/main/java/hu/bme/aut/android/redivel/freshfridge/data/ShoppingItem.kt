@@ -1,31 +1,30 @@
 package hu.bme.aut.android.redivel.freshfridge.data
 
-
-data class FridgeItem(
+data class ShoppingItem(
     var id: String = "",
     var uid: String? = null,
     var name: String? = null,
-    var description: String? = null,
     var category: ItemCategory = ItemCategory.OTHER,
-    var expirationDate: String? = null,
-    var isOpen: Boolean = false
-) {
-    constructor(item: FridgeItem) : this() {
+    var bought: Boolean = false
+){
+    constructor(item: ShoppingItem) : this() {
         id= item.id
         uid= item.uid
         name= item.name
-        description= item.description
         category= item.category
-        expirationDate= item.expirationDate
-        isOpen= item.isOpen
+    }
+
+    constructor(item: FridgeItem) : this() {
+        uid= item.uid
+        name= item.name
+        category= item.category
     }
 
     override fun equals(item: Any?): Boolean {
         item ?: return false
 
-        if(item !is FridgeItem) return false
+        if(item !is ShoppingItem) return false
 
         return id == item.id
     }
-
 }
