@@ -15,6 +15,7 @@ interface BaseAdapter {
             ItemCategory.PROCESSED_MEAT -> R.string.PROCESSED_MEAT
             ItemCategory.BAKED -> R.string.BAKED
             ItemCategory.READY_MEAL -> R.string.READY_MEAL
+            ItemCategory.DRINK -> R.string.DRINK
             ItemCategory.OTHER -> R.string.OTHER
         }
     }
@@ -22,13 +23,14 @@ interface BaseAdapter {
     @DrawableRes()
     fun getImageResource(category: ItemCategory): Int {
         return when (category) {
-            ItemCategory.DAIRY -> R.drawable.groceries
-            ItemCategory.FRUITS_VEGETABLES -> R.drawable.groceries
-            ItemCategory.RAW_MEAT -> R.drawable.groceries
-            ItemCategory.PROCESSED_MEAT -> R.drawable.groceries
-            ItemCategory.BAKED -> R.drawable.groceries
-            ItemCategory.READY_MEAL -> R.drawable.groceries
-            ItemCategory.OTHER -> R.drawable.ic_pencil_grey600_48dp
+            ItemCategory.DAIRY -> R.drawable.dairy
+            ItemCategory.FRUITS_VEGETABLES -> R.drawable.fruit
+            ItemCategory.RAW_MEAT -> R.drawable.raw_meat
+            ItemCategory.PROCESSED_MEAT -> R.drawable.proc_meat
+            ItemCategory.BAKED -> R.drawable.baked
+            ItemCategory.READY_MEAL -> R.drawable.ready
+            ItemCategory.DRINK -> R.drawable.drink
+            ItemCategory.OTHER -> R.drawable.other
         }
     }
 
@@ -40,6 +42,7 @@ interface BaseAdapter {
             ItemCategory.PROCESSED_MEAT -> ContextCompat.getColor(context, R.color.PROCESSED_MEAT)
             ItemCategory.BAKED -> ContextCompat.getColor(context, R.color.BAKED)
             ItemCategory.READY_MEAL -> ContextCompat.getColor(context, R.color.READY_MEAL)
+            ItemCategory.DRINK -> ContextCompat.getColor(context, R.color.DRINK)
             ItemCategory.OTHER -> ContextCompat.getColor(context, R.color.OTHER)
         }
     }

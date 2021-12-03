@@ -20,6 +20,12 @@ data class FridgeItem(
         isOpen= item.isOpen
     }
 
+    constructor(item: ShoppingItem) : this() {
+        uid= item.uid
+        name= item.name
+        category= item.category
+    }
+
     override fun equals(item: Any?): Boolean {
         item ?: return false
 

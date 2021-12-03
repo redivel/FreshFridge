@@ -5,13 +5,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import hu.bme.aut.android.redivel.freshfridge.data.ShoppingItem
 import hu.bme.aut.android.redivel.freshfridge.databinding.ItemShoppingBinding
+import hu.bme.aut.android.redivel.freshfridge.ui.AddToFridgeDialogFragment
 
-class ShoppingAdapter(private val listener: ShoppingItemClickListener, private val context: Context):
+class ShoppingAdapter(private val listener: ShoppingItemClickListener, private val context: Context, private val fm: FragmentManager):
     ListAdapter<ShoppingItem, ShoppingAdapter.ShoppingViewHolder>(itemCallback), BaseAdapter {
 
     private var shoppingList: MutableList<ShoppingItem> = mutableListOf()
@@ -45,7 +47,10 @@ class ShoppingAdapter(private val listener: ShoppingItemClickListener, private v
             listener.onItemChanged(shoppingList[position])
         }
 
-        holder.ibRemoveSh.setOnClickListener { listener.onItemDeleted(shoppingItem) }
+        holder.ibRemoveSh.setOnClickListener {
+            AddToFridgeDialogFragment(shoppingItem).show(fm,AddToFridgeDialogFragment.TAG)
+            listener.onItemDeleted(shoppingItem)
+        }
     }
 
     fun addItem(item: ShoppingItem) {
@@ -68,6 +73,8 @@ class ShoppingAdapter(private val listener: ShoppingItemClickListener, private v
         shoppingList.remove(item)
         notifyDataSetChanged()
     }
+
+    override fun getItemCount(): Int = shoppingList.size
 
     interface ShoppingItemClickListener {
         fun onItemChanged(item: ShoppingItem)

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
@@ -32,8 +33,6 @@ class MainActivity : BaseActivity(),
 
         setSupportActionBar(binding.toolbar)
 
-//        database = FridgeDatabase.getDatabase(applicationContext)
-
         initRecyclerView()
 
         binding.fab.setOnClickListener {
@@ -45,19 +44,29 @@ class MainActivity : BaseActivity(),
         initFridgeItemsListener()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
-        return true
+        val searchItem = menu.findItem(R.id.icSearch)
+        if (searchItem!=null){
+            val searchView = searchItem.actionView as SearchView
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    adapter.filter.filter(newText)
+                    return true
+                }
+            })
+        }
+        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.icShopping -> {
                 startActivity(Intent(this@MainActivity, ShoppingActivity::class.java))
-                true
-            }
-            R.id.icSettings -> {
-                startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
                 true
             }
             R.id.icLogout -> {

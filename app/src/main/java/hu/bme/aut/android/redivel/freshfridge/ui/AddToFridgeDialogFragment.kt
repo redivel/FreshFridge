@@ -11,15 +11,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import hu.bme.aut.android.redivel.freshfridge.data.FridgeItem
 import hu.bme.aut.android.redivel.freshfridge.data.ShoppingItem
-import hu.bme.aut.android.redivel.freshfridge.databinding.DialogAddToShoppingBinding
+import hu.bme.aut.android.redivel.freshfridge.databinding.DialogAddToFridgeBinding
 
-class AddToShoppingDialogFragment(private val item: FridgeItem) : DialogFragment() {
-    interface AddToShoppingDialogListener {
-        fun onItemAdded(newItem: ShoppingItem)
+class AddToFridgeDialogFragment(private val item: ShoppingItem) : DialogFragment() {
+    interface AddToFridgeDialogListener {
+        fun onItemAdded(newItem: FridgeItem)
     }
 
-    private lateinit var listener: AddToShoppingDialogListener
-    private lateinit var binding: DialogAddToShoppingBinding
+    private lateinit var listener: AddToFridgeDialogListener
+    private lateinit var binding: DialogAddToFridgeBinding
 
     private val firebaseUser: FirebaseUser?
         get() = FirebaseAuth.getInstance().currentUser
@@ -29,18 +29,17 @@ class AddToShoppingDialogFragment(private val item: FridgeItem) : DialogFragment
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        listener = context as AddToShoppingDialogListener
-            ?: throw RuntimeException("Activity must implement the AddToShoppingDialogListener interface!")
+        listener = context as AddToFridgeDialogListener
+            ?: throw RuntimeException("Activity must implement the AddToFridgeDialogListener interface!")
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        binding = DialogAddToShoppingBinding.inflate(LayoutInflater.from(context))
+        binding = DialogAddToFridgeBinding.inflate(LayoutInflater.from(context))
         return AlertDialog.Builder(requireContext())
-            .setTitle("Add to shoppinglist?")
+            .setTitle("Add to fridge?")
             .setView(binding.root)
             .setPositiveButton("Yes") { dialogInterface, i ->
-                Toast.makeText(context,"Added", Toast.LENGTH_SHORT).show()
-                listener.onItemAdded(ShoppingItem(item))
+                listener.onItemAdded(FridgeItem(item))
             }
 
             .setNegativeButton("No") { dialogInterface, i ->
@@ -50,6 +49,6 @@ class AddToShoppingDialogFragment(private val item: FridgeItem) : DialogFragment
     }
 
     companion object {
-        const val TAG = "AddToShoppingDialogFragment"
+        const val TAG = "AddToFridgeDialogFragment"
     }
 }

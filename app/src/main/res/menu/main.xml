@@ -4,15 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/icSearch"
+        android:icon="@drawable/ic_search"
+        android:title="Search"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+
+    <item
         android:id="@+id/icShopping"
         android:icon="@drawable/ic_shoppinglist"
         android:title="Shopping list"
-        app:showAsAction="ifRoom"/>
-
-    <item
-        android:id="@+id/icSettings"
-        android:icon="@drawable/ic_settings"
-        android:title="Settings"
         app:showAsAction="ifRoom"/>
 
     <item

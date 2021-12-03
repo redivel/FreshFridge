@@ -1,28 +1,28 @@
 package hu.bme.aut.android.redivel.freshfridge.adapter
 
-import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.*
-import androidx.annotation.DrawableRes
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import hu.bme.aut.android.redivel.freshfridge.R
 import hu.bme.aut.android.redivel.freshfridge.data.FridgeItem
-import hu.bme.aut.android.redivel.freshfridge.data.ItemCategory
 import hu.bme.aut.android.redivel.freshfridge.databinding.ItemFridgeBinding
 import hu.bme.aut.android.redivel.freshfridge.ui.AddToShoppingDialogFragment
-import hu.bme.aut.android.redivel.freshfridge.ui.NewFridgeItemDialogFragment
+import java.util.*
 
 class FridgeAdapter(private val listener: FridgeItemClickListener, private val context: Context, private val fm: FragmentManager) :
-    ListAdapter<FridgeItem, FridgeAdapter.FridgeViewHolder>(itemCallback), BaseAdapter {
+    ListAdapter<FridgeItem, FridgeAdapter.FridgeViewHolder>(itemCallback), BaseAdapter, Filterable {
 
+    private var fridgeItemListFull: MutableList<FridgeItem> = mutableListOf()
     private var fridgeItemList: MutableList<FridgeItem> = mutableListOf()
+
+    init {
+        fridgeItemList = fridgeItemListFull
+    }
 
     class FridgeViewHolder(binding: ItemFridgeBinding) : RecyclerView.ViewHolder(binding.root){
         val cbIsOpen: CheckBox = binding.cbIsOpen
@@ -68,6 +68,8 @@ class FridgeAdapter(private val listener: FridgeItemClickListener, private val c
     fun addItem(item: FridgeItem) {
         fridgeItemList.add(item)
         notifyItemInserted(fridgeItemList.size-1)
+        fridgeItemList.sortBy { it.expirationDate }
+        notifyDataSetChanged()
     }
 
     fun update(item: FridgeItem) {
@@ -102,6 +104,35 @@ class FridgeAdapter(private val listener: FridgeItemClickListener, private val c
             override fun areContentsTheSame(oldItem: FridgeItem, newItem: FridgeItem): Boolean {
                 return oldItem == newItem
             }
+        }
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val charSearch = constraint.toString()
+                if (charSearch.isEmpty()) {
+                    fridgeItemList = fridgeItemListFull
+                } else {
+                    val resultList: MutableList<FridgeItem> = mutableListOf()
+                    for (row in fridgeItemListFull) {
+                        if (row.name!!.toLowerCase(Locale.ROOT).contains(charSearch.toLowerCase(
+                                Locale.ROOT))) {
+                            resultList.add(row)
+                        }
+                    }
+                    fridgeItemList = resultList
+                }
+                val filterResults = FilterResults()
+                filterResults.values = fridgeItemList
+                return filterResults
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                fridgeItemList = results?.values as MutableList<FridgeItem>
+                notifyDataSetChanged()
+            }
+
         }
     }
 }

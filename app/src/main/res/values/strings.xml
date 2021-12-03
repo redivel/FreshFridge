@@ -29,6 +29,7 @@
     <string name="PROCESSED_MEAT">Processed meat</string>
     <string name="BAKED">Baked goods</string>
     <string name="READY_MEAL">Ready meal</string>
+    <string name="DRINK">Drink</string>
     <string name="OTHER">Other</string>
 
     <string-array name="category_items">
@@ -38,6 +39,7 @@
         <item>Processed meat</item>
         <item>Baked goods</item>
         <item>Ready meal</item>
+        <item>Drink</item>
         <item>Other</item>
     </string-array>
     <string name="title_activity_settings">SettingsActivity</string>

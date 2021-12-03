@@ -14,7 +14,7 @@ import hu.bme.aut.android.redivel.freshfridge.data.FridgeItem
 import hu.bme.aut.android.redivel.freshfridge.data.ItemCategory
 import hu.bme.aut.android.redivel.freshfridge.databinding.DialogNewFridgeItemBinding
 
-class NewFridgeItemDialogFragment : DialogFragment(), DatePickerDialogFragment.DateListener {
+class NewFridgeItemDialogFragment(private val item: FridgeItem? = null) : DialogFragment(), DatePickerDialogFragment.DateListener {
     interface NewFridgeItemDialogListener {
         fun onFridgeItemCreated(newItem: FridgeItem)
     }
@@ -46,6 +46,11 @@ class NewFridgeItemDialogFragment : DialogFragment(), DatePickerDialogFragment.D
             val datePicker = DatePickerDialogFragment()
             datePicker.setTargetFragment(this, 0)
             fragmentManager?.let { datePicker.show(it, DatePickerDialogFragment.TAG) }
+        }
+
+        if (item != null){
+            binding.etName.setText(item.name)
+            binding.spCategory.setSelection(item.category.ordinal)
         }
 
         return AlertDialog.Builder(requireContext())

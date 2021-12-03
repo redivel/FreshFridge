@@ -1,7 +1,7 @@
 package hu.bme.aut.android.redivel.freshfridge.data
 
 enum class ItemCategory {
-    DAIRY, FRUITS_VEGETABLES, RAW_MEAT, PROCESSED_MEAT, BAKED, READY_MEAL, OTHER;
+    DAIRY, FRUITS_VEGETABLES, RAW_MEAT, PROCESSED_MEAT, BAKED, READY_MEAL, DRINK, OTHER;
     companion object {
         @JvmStatic
         fun getByOrdinal(ordinal: Int): ItemCategory? {

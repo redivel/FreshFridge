@@ -12,6 +12,7 @@ data class ShoppingItem(
         uid= item.uid
         name= item.name
         category= item.category
+        bought= item.bought
     }
 
     constructor(item: FridgeItem) : this() {

@@ -70,9 +70,15 @@ class DatePickerDialogFragment : DialogFragment() {
 
         dateString.append(calSelectedDate.get(Calendar.YEAR))
         dateString.append(".")
-        dateString.append(calSelectedDate.get(Calendar.MONTH) + 1)
+
+        var month: String = (calSelectedDate.get(Calendar.MONTH)+1).toString()
+        if (month.length == 1) month = "0$month"
+        dateString.append(month)
         dateString.append(".")
-        dateString.append(calSelectedDate.get(Calendar.DAY_OF_MONTH))
+
+        var day: String = calSelectedDate.get(Calendar.DAY_OF_MONTH).toString()
+        if (day.length == 1) day = "0$day"
+        dateString.append(day)
         dateString.append(".")
 
         return dateString.toString()

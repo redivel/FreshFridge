@@ -19,10 +19,6 @@
             android:name=".ShoppingActivity"
             android:exported="true" />
         <activity
-            android:name=".SettingsActivity"
-            android:exported="true"
-            android:label="@string/title_activity_settings" />
-        <activity
             android:name=".splash.SplashScreenActivity"
             android:exported="true"
             android:theme="@style/Theme.Splash" >

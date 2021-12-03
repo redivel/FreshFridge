@@ -21,7 +21,8 @@
     <color name="FRUITS_VEGETABLES">#99FF99</color>
     <color name="RAW_MEAT">#FF7777</color>
     <color name="PROCESSED_MEAT">#FFAAAA</color>
-    <color name="BAKED">#FFFFAA</color>
-    <color name="READY_MEAL">#99BBFF</color>
-    <color name="OTHER">#FFCCAA</color>
+    <color name="BAKED">#FFCCAA</color>
+    <color name="READY_MEAL">#FFFFAA</color>
+    <color name="DRINK">#99BBFF</color>
+    <color name="OTHER">#DEAAFF</color>
 </resources>

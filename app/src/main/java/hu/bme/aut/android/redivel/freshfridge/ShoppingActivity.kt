@@ -5,12 +5,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import hu.bme.aut.android.redivel.freshfridge.adapter.ShoppingAdapter
+import hu.bme.aut.android.redivel.freshfridge.data.FridgeItem
 import hu.bme.aut.android.redivel.freshfridge.data.ShoppingItem
 import hu.bme.aut.android.redivel.freshfridge.databinding.ActivityShoppingBinding
+import hu.bme.aut.android.redivel.freshfridge.ui.AddToFridgeDialogFragment
+import hu.bme.aut.android.redivel.freshfridge.ui.NewFridgeItemDialogFragment
 import kotlin.concurrent.thread
 
 class ShoppingActivity : BaseActivity(),
-    ShoppingAdapter.ShoppingItemClickListener
+    ShoppingAdapter.ShoppingItemClickListener,
+    AddToFridgeDialogFragment.AddToFridgeDialogListener,
+    NewFridgeItemDialogFragment.NewFridgeItemDialogListener
 {
     private lateinit var binding: ActivityShoppingBinding
     private lateinit var adapter: ShoppingAdapter
@@ -19,14 +24,15 @@ class ShoppingActivity : BaseActivity(),
         super.onCreate(savedInstanceState)
         binding = ActivityShoppingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setTitle("Shopping List")
 
         initRecyclerView()
         initShoppingItemsListener()
     }
 
     private fun initRecyclerView() {
-        adapter = ShoppingAdapter(this, baseContext)
-        binding.rvShopping.layoutManager = LinearLayoutManager(applicationContext)
+        adapter = ShoppingAdapter(this@ShoppingActivity, this@ShoppingActivity, supportFragmentManager)
+        binding.rvShopping.layoutManager = LinearLayoutManager(this@ShoppingActivity)
         binding.rvShopping.adapter = adapter
         binding.rvShopping.itemAnimator = null;
     }
@@ -51,6 +57,17 @@ class ShoppingActivity : BaseActivity(),
             .addOnFailureListener { e -> toast(e.toString()) }
     }
 
+    override fun onFridgeItemCreated(newItem: FridgeItem) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("fridgeitems-$uid")
+            .add(newItem)
+            .addOnSuccessListener {
+                toast("Item created")
+                it.update("id",it.id)
+            }
+            .addOnFailureListener { e -> toast(e.toString()) }
+    }
+
     private fun initShoppingItemsListener() {
         val db = FirebaseFirestore.getInstance()
         db.collection("shoppinglist-$uid")
@@ -68,6 +85,7 @@ class ShoppingActivity : BaseActivity(),
                                 thread{
                                     runOnUiThread{
                                         adapter.addItem(item)
+                                        toast(adapter.itemCount.toString())
                                     }
                                 }
                         }
@@ -90,5 +108,11 @@ class ShoppingActivity : BaseActivity(),
                     }
                 }
             }
+    }
+
+    override fun onItemAdded(newItem: FridgeItem) {
+        NewFridgeItemDialogFragment(newItem).show(
+            supportFragmentManager,
+            NewFridgeItemDialogFragment.TAG)
     }
 }
