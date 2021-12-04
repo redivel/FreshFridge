@@ -62,7 +62,7 @@ class ShoppingActivity : BaseActivity(),
         db.collection("fridgeitems-$uid")
             .add(newItem)
             .addOnSuccessListener {
-                toast("Item created")
+                toast("Item added")
                 it.update("id",it.id)
             }
             .addOnFailureListener { e -> toast(e.toString()) }

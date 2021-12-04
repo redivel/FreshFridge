@@ -42,9 +42,7 @@ class AddToFridgeDialogFragment(private val item: ShoppingItem) : DialogFragment
                 listener.onItemAdded(FridgeItem(item))
             }
 
-            .setNegativeButton("No") { dialogInterface, i ->
-                Toast.makeText(context,"Deleted", Toast.LENGTH_SHORT).show()
-            }
+            .setNegativeButton("No", null)
             .create()
     }
 

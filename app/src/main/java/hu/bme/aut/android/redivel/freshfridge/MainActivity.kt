@@ -111,7 +111,7 @@ class MainActivity : BaseActivity(),
         db.collection("fridgeitems-$uid")
             .add(newItem)
             .addOnSuccessListener {
-                toast("Item created")
+                toast("Item added")
                 it.update("id",it.id)
             }
             .addOnFailureListener { e -> toast(e.toString()) }
@@ -122,7 +122,7 @@ class MainActivity : BaseActivity(),
         db.collection("shoppinglist-$uid")
             .add(newItem)
             .addOnSuccessListener {
-                toast("Item created")
+                toast("Item added")
                 it.update("id",it.id)
             }
             .addOnFailureListener { e -> toast(e.toString()) }
