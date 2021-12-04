@@ -8,6 +8,7 @@ import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import hu.bme.aut.android.redivel.freshfridge.LoginActivity
 import hu.bme.aut.android.redivel.freshfridge.MainActivity
 import hu.bme.aut.android.redivel.freshfridge.R
@@ -21,6 +22,7 @@ class SplashScreenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,

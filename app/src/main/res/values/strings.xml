@@ -11,10 +11,10 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
 
-    <string name="name">Name</string>
+    <string name="name">Name*</string>
     <string name="description">Description</string>
-    <string name="category">Category</string>
-    <string name="expiration_date">Expiration Date</string>
+    <string name="category">Category*</string>
+    <string name="expiration_date">Expiration Date*</string>
     <string name="opened">Opened</string>
     <string name="new_fridge_item">New Fridge Item</string>
     <string name="button_ok">OK</string>

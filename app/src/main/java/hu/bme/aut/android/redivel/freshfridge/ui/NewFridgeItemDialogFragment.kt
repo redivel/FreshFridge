@@ -2,9 +2,11 @@ package hu.bme.aut.android.redivel.freshfridge.ui
 
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.google.firebase.auth.FirebaseAuth
@@ -56,10 +58,7 @@ class NewFridgeItemDialogFragment(private val item: FridgeItem? = null) : Dialog
         return AlertDialog.Builder(requireContext())
             .setTitle(R.string.new_fridge_item)
             .setView(binding.root)
-            .setPositiveButton(R.string.button_ok) { dialogInterface, i ->
-                okClick()
-            }
-
+            .setPositiveButton(R.string.button_ok) { dialoginterface,i->okClick() }
             .setNegativeButton(R.string.button_cancel, null)
             .create()
     }
@@ -67,6 +66,9 @@ class NewFridgeItemDialogFragment(private val item: FridgeItem? = null) : Dialog
     private fun okClick() {
         if (isValid()) {
             listener.onFridgeItemCreated(getFridgeItem())
+        }
+        else{
+            Toast.makeText(context, "Please fill name, category and expiration date!", Toast.LENGTH_LONG).show()
         }
     }
 

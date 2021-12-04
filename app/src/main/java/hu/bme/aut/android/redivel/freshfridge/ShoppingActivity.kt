@@ -1,6 +1,7 @@
 package hu.bme.aut.android.redivel.freshfridge
 
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
@@ -24,7 +25,6 @@ class ShoppingActivity : BaseActivity(),
         super.onCreate(savedInstanceState)
         binding = ActivityShoppingBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setTitle("Shopping List")
 
         initRecyclerView()
         initShoppingItemsListener()
