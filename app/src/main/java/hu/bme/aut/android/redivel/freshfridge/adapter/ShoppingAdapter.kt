@@ -56,6 +56,8 @@ class ShoppingAdapter(private val listener: ShoppingItemClickListener, private v
     fun addItem(item: ShoppingItem) {
         shoppingList.add(item)
         notifyItemInserted(shoppingList.size-1)
+        shoppingList.sortBy { it.name }
+        notifyDataSetChanged()
     }
 
     fun update(item: ShoppingItem) {

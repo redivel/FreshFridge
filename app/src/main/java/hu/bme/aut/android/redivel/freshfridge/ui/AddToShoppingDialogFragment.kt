@@ -39,13 +39,10 @@ class AddToShoppingDialogFragment(private val item: FridgeItem) : DialogFragment
             .setTitle("Add to shoppinglist?")
             .setView(binding.root)
             .setPositiveButton("Yes") { dialogInterface, i ->
-                Toast.makeText(context,"Added", Toast.LENGTH_SHORT).show()
                 listener.onItemAdded(ShoppingItem(item))
             }
 
-            .setNegativeButton("No") { dialogInterface, i ->
-                Toast.makeText(context,"Deleted", Toast.LENGTH_SHORT).show()
-            }
+            .setNegativeButton("No", null)
             .create()
     }
 

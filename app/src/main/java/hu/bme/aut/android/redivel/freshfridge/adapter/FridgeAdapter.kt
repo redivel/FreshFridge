@@ -2,7 +2,9 @@ package hu.bme.aut.android.redivel.freshfridge.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.FragmentManager
@@ -68,6 +70,7 @@ class FridgeAdapter(private val listener: FridgeItemClickListener, private val c
     fun addItem(item: FridgeItem) {
         fridgeItemList.add(item)
         notifyItemInserted(fridgeItemList.size-1)
+        fridgeItemList.sortBy { it.name }
         fridgeItemList.sortBy { it.expirationDate }
         notifyDataSetChanged()
     }
@@ -80,6 +83,7 @@ class FridgeAdapter(private val listener: FridgeItemClickListener, private val c
                 }
             }
         else fridgeItemList.add(item)
+        fridgeItemList.sortBy { it.expirationDate }
         notifyDataSetChanged()
     }
 

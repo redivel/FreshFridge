@@ -85,7 +85,6 @@ class ShoppingActivity : BaseActivity(),
                                 thread{
                                     runOnUiThread{
                                         adapter.addItem(item)
-                                        toast(adapter.itemCount.toString())
                                     }
                                 }
                         }
